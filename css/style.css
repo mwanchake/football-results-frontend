@@ -1,0 +1,159 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #0b1f0b;
+  color: white;
+  margin: 0;
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background: linear-gradient(90deg, #15803d 60%, #22c55e 100%);
+  padding: 2rem 1rem 1rem 1rem;
+  color: white;
+  box-shadow: 0 2px 8px rgba(21, 128, 61, 0.15);
+}
+
+h1 {
+  font-weight: 600;
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 1.5rem 0 0.5rem 0;
+}
+
+select, input[type="date"], button {
+  padding: 10px 16px;
+  margin: 0;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+  font-family: inherit;
+  box-shadow: 0 1px 4px rgba(34, 197, 94, 0.08);
+}
+
+button {
+  background: #22c55e;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
+}
+
+button:hover {
+  background: #16a34a;
+  transform: translateY(-2px) scale(1.04);
+}
+
+main {
+  flex: 1;
+  padding: 2rem 0.5rem 1rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.match {
+  background: #1a2e1a;
+  margin: 18px auto;
+  padding: 18px 24px;
+  border-radius: 12px;
+  max-width: 500px;
+  box-shadow: 0 4px 16px rgba(21, 128, 61, 0.12);
+  transition: box-shadow 0.2s;
+  border: 1px solid #15803d33;
+}
+
+.match:hover {
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.18);
+  border-color: #22c55e55;
+}
+
+.loading {
+  font-size: 1.2rem;
+  color: #22c55e;
+  margin-top: 2rem;
+  letter-spacing: 1px;
+}
+
+.loading-spinner {
+  border: 4px solid #15803d;
+  border-top: 4px solid #22c55e;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  animation: spin 1s linear infinite;
+  margin: 2rem auto 0 auto;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+footer {
+  background: #15803d;
+  color: #e5ffe5;
+  padding: 1rem 0;
+  font-size: 1rem;
+  box-shadow: 0 -2px 8px rgba(21, 128, 61, 0.10);
+  margin-top: auto;
+}
+
+footer a {
+  color: #22c55e;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+footer p {
+  margin: 0.5rem 0;
+  line-height: 1.7;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.football-logo {
+  width: 48px;
+  height: 48px;
+  animation: rotateJump 1.2s infinite;
+}
+
+@keyframes rotateJump {
+  0% {
+    transform: rotate(0deg) translateY(0);
+  }
+  20% {
+    transform: rotate(72deg) translateY(-10px);
+  }
+  40% {
+    transform: rotate(144deg) translateY(-20px);
+  }
+  50% {
+    transform: rotate(180deg) translateY(-25px);
+  }
+  60% {
+    transform: rotate(216deg) translateY(-20px);
+  }
+  80% {
+    transform: rotate(288deg) translateY(-10px);
+  }
+  100% {
+    transform: rotate(360deg) translateY(0);
+  }
+}

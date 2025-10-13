@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Football Results</title>
+  <link rel="icon" href="https://api.iconify.design/mdi:soccer.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header>
+    <div class="logo-container">
+      <img src="https://api.iconify.design/mdi:soccer.svg" alt="Football Logo" class="football-logo" />
+      <h1>⚽ Football Results</h1>
+    </div>
+    <div class="filters">
+      <input type="date" id="dateInput" />
+      <select id="leagueSelect">
+        <option value="">All Leagues</option>
+      </select>
+      <button id="fetchBtn">Show Results</button>
+    </div>
+  </header>
+
+  <main id="resultsContainer">
+    <div class="loading-spinner"></div>
+    <p class="loading">Loading results...</p>
+  </main>
+
+  <footer>
+    <p>
+      Powered by <a href="https://www.api-football.com/" target="_blank">API-Football</a> | Built by Mwancha 💚
+      <br>
+      Contact Me: <a href="mailto:mwanchaduke33@gmail.com">mwanchaduke33@gmail.com</a> | 
+      <!--a href="tel:+1234567890">+1 234 567 890</a>-->
+    </p>
+  </footer>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
