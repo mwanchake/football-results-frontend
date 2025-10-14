@@ -5,22 +5,27 @@ const leagueSelect = document.getElementById("leagueSelect");
 const fetchBtn = document.getElementById("fetchBtn");
 const resultsContainer = document.getElementById("resultsContainer");
 
-// Set today's date by default
+// Default to today's date
 const today = new Date().toISOString().slice(0, 10);
 dateInput.value = today;
 
-// Load leagues
+// ✅ Load all leagues
 async function loadLeagues() {
-  const res = await fetch(`${baseURL}/api/leagues`);
-  const leagues = await res.json();
-  leagues.forEach(l => {
-    const option = document.createElement("option");
-    option.value = l.id;
-    option.textContent = `${l.name} (${l.country})`;
-    leagueSelect.appendChild(option);
-  });
+  try {
+    const res = await fetch(`${baseURL}/api/leagues`);
+    const leagues = await res.json();
+    leagues.forEach(l => {
+      const option = document.createElement("option");
+      option.value = l.id;
+      option.textContent = `${l.name} (${l.country})`;
+      leagueSelect.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Error loading leagues:", error);
+  }
 }
 
+// ✅ Fetch matches from backend
 async function fetchMatches() {
   const date = dateInput.value;
   const league = leagueSelect.value;
@@ -36,23 +41,67 @@ async function fetchMatches() {
   }
 }
 
+// ✅ Display matches correctly for API-Football style
 function displayMatches(matches) {
+  resultsContainer.innerHTML = '';
+
   if (!matches || matches.length === 0) {
-    resultsContainer.innerHTML = "<p>No matches found.</p>";
+    resultsContainer.innerHTML = '<p>No matches found for this date.</p>';
     return;
   }
 
-  resultsContainer.innerHTML = "";
+  // Group by league
+  const groupedLeagues = {};
   matches.forEach(match => {
-    const div = document.createElement("div");
-    div.className = "match";
-    div.innerHTML = `
-      <h3>${match.league.name}</h3>
-      <p>${match.teams.home.name} vs ${match.teams.away.name}</p>
-      <p><strong>${match.goals.home ?? 0} - ${match.goals.away ?? 0}</strong></p>
-      <p>${new Date(match.fixture.date).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</p>
+    const leagueName = match.league?.name || "Unknown League";
+    const leagueLogo = match.league?.logo || "";
+
+    if (!groupedLeagues[leagueName]) {
+      groupedLeagues[leagueName] = { logo: leagueLogo, matches: [] };
+    }
+    groupedLeagues[leagueName].matches.push(match);
+  });
+
+  // Render
+  Object.keys(groupedLeagues).forEach(leagueName => {
+    const { logo, matches } = groupedLeagues[leagueName];
+    const leagueSection = document.createElement("div");
+    leagueSection.classList.add("league-section");
+
+    leagueSection.innerHTML = `
+      <div class="league-header">
+        ${logo ? `<img src="${logo}" alt="${leagueName}" class="league-logo">` : ""}
+        <h2>${leagueName}</h2>
+      </div>
     `;
-    resultsContainer.appendChild(div);
+
+    matches.forEach(match => {
+      const matchDiv = document.createElement("div");
+      matchDiv.classList.add("match-card");
+
+      const home = match.teams?.home;
+      const away = match.teams?.away;
+      const goals = match.goals;
+      const date = match.fixture?.date ? new Date(match.fixture.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "N/A";
+
+      matchDiv.innerHTML = `
+        <div class="teams">
+          <div class="team">
+            ${home?.logo ? `<img src="${home.logo}" class="team-logo" alt="${home.name}">` : ""}
+            <span>${home?.name || "-"}</span>
+          </div>
+          <span class="score">${goals?.home ?? "-"} - ${goals?.away ?? "-"}</span>
+          <div class="team">
+            ${away?.logo ? `<img src="${away.logo}" class="team-logo" alt="${away.name}">` : ""}
+            <span>${away?.name || "-"}</span>
+          </div>
+        </div>
+        <p class="match-time">${date}</p>
+      `;
+      leagueSection.appendChild(matchDiv);
+    });
+
+    resultsContainer.appendChild(leagueSection);
   });
 }
 
