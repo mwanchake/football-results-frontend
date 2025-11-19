@@ -280,6 +280,51 @@ footer a:hover {
   .scores-vertical { align-items: center; min-width: auto; }
 }
 
+/* Improved mobile layout: make cards full-width, align teams and scores clearly */
+@media (max-width: 520px) {
+  .league-section {
+    margin: 12px 8px;
+    padding: 12px;
+    max-width: calc(100% - 16px);
+  }
+  .match-card {
+    padding: 10px;
+    margin: 8px 0;
+  }
+  .match-card-content {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  /* Show home and away on a single row with names on left and small logos */
+  .teams-vertical {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    min-width: auto;
+  }
+  .team-row { font-size: 15px; }
+  .team-row .team-logo { width: 28px; height: 28px; }
+
+  /* Place scores centered and prominent */
+  .scores-vertical {
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+    order: 2;
+    margin-top: 6px;
+  }
+  .score-number { font-size: 20px; }
+
+  .match-meta {
+    order: 3;
+    margin-top: 4px;
+    text-align: center;
+    font-size: 13px;
+  }
+}
+
 .teams {
   display: flex;
   justify-content: space-between;
