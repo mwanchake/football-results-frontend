@@ -138,11 +138,14 @@ function displayMatches(matches) {
         scoreText = '-:-';
       }
 
+      const homeLogoHtml = m.homeLogo ? `<img src="${escapeHtml(m.homeLogo)}" class="team-logo" alt="${escapeHtml(m.home || '')}">` : '';
+      const awayLogoHtml = m.awayLogo ? `<img src="${escapeHtml(m.awayLogo)}" class="team-logo" alt="${escapeHtml(m.away || '')}">` : '';
+
       matchDiv.innerHTML = `
         <div class="teams">
-          <div class="team"><span>${escapeHtml(m.home || '-')}</span></div>
+          <div class="team">${homeLogoHtml}<span>${escapeHtml(m.home || '-')}</span></div>
           <span class="score">${scoreText}</span>
-          <div class="team"><span>${escapeHtml(m.away || '-')}</span></div>
+          <div class="team">${awayLogoHtml}<span>${escapeHtml(m.away || '-')}</span></div>
         </div>
         <p class="match-time">${escapeHtml(time)}</p>
       `;
