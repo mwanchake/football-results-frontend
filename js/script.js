@@ -1,6 +1,7 @@
 // Use runtime-configured backend URL if provided via `frontend/config.js`.
-// Falls back to localhost for local development.
-const baseURL = (typeof window !== 'undefined' && window.__API_BASE__) ? window.__API_BASE__ : 'http://localhost:8080';
+// Falls back to the deployed Render backend so the static site works without
+// needing a separate `config.js` file. Change this if you redeploy backend.
+const baseURL = (typeof window !== 'undefined' && window.__API_BASE__) ? window.__API_BASE__ : 'https://ootball-results-backend.onrender.com';
 
 const dateInput = document.getElementById("dateInput");
 const leagueSelect = document.getElementById("leagueSelect");
