@@ -126,18 +126,11 @@ function displayMatches(matches) {
       // Only show a numeric score when both goals are present and the fixture appears played.
       // Otherwise show '-' for each team for unplayed matches. This also handles cases where the
       // backend still returns 0-0 placeholders (we treat 0-0 without matchTime as unplayed).
-      let homeGoalsDisplay = '-';
-      let awayGoalsDisplay = '-';
-      if (typeof m.homeGoals === 'number' && typeof m.awayGoals === 'number') {
-        // If both are zero and there's no explicit matchTime, treat as unplayed
-        if (m.homeGoals === 0 && m.awayGoals === 0 && (!m.matchTime || String(m.matchTime).trim() === '')) {
-          homeGoalsDisplay = '-';
-          awayGoalsDisplay = '-';
-        } else {
-          homeGoalsDisplay = String(m.homeGoals);
-          awayGoalsDisplay = String(m.awayGoals);
-        }
-      }
+      // Always display numeric scores (default to 0) — shows 0–0 for unplayed fixtures
+      let homeGoalsDisplay = '0';
+      let awayGoalsDisplay = '0';
+      if (typeof m.homeGoals === 'number') homeGoalsDisplay = String(m.homeGoals);
+      if (typeof m.awayGoals === 'number') awayGoalsDisplay = String(m.awayGoals);
 
       const homeLogoHtml = m.homeLogo ? `<img src="${escapeHtml(m.homeLogo)}" class="team-logo" alt="${escapeHtml(m.home || '')}">` : '';
       const awayLogoHtml = m.awayLogo ? `<img src="${escapeHtml(m.awayLogo)}" class="team-logo" alt="${escapeHtml(m.away || '')}">` : '';
