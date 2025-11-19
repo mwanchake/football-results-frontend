@@ -141,17 +141,26 @@ function displayMatches(matches) {
       const homeLogoHtml = m.homeLogo ? `<img src="${escapeHtml(m.homeLogo)}" class="team-logo" alt="${escapeHtml(m.home || '')}">` : '';
       const awayLogoHtml = m.awayLogo ? `<img src="${escapeHtml(m.awayLogo)}" class="team-logo" alt="${escapeHtml(m.away || '')}">` : '';
 
-      // Stacked layout: home above, away below, score centered between them
-      matchDiv.innerHTML = `
-        <div class="teams stacked">
-          <div class="team home">${homeLogoHtml}<span>${escapeHtml(m.home || '-')}</span></div>
-          <div class="score-row">
-            <span class="score">${scoreText}</span>
-            <span class="match-time">${escapeHtml(time)}</span>
+        // Three-column layout: teams left (stacked), time center, scores right (stacked)
+        matchDiv.innerHTML = `
+          <div class="match-card">
+            <div class="teams-vertical">
+              <div class="team-item">
+                ${homeLogoHtml}
+                <span class="team-name">${escapeHtml(m.home || '-')}</span>
+              </div>
+              <div class="team-item">
+                ${awayLogoHtml}
+                <span class="team-name">${escapeHtml(m.away || '-')}</span>
+              </div>
+            </div>
+            <div class="center-time">${time}</div>
+            <div class="scores-vertical">
+              <div class="score-item">${homeGoalsDisplay}</div>
+              <div class="score-item">${awayGoalsDisplay}</div>
+            </div>
           </div>
-          <div class="team away">${awayLogoHtml}<span>${escapeHtml(m.away || '-')}</span></div>
-        </div>
-      `;
+        `;
       leagueSection.appendChild(matchDiv);
     });
 
