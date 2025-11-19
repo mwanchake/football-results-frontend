@@ -6,6 +6,7 @@
   if (typeof window === 'undefined') return;
   // If not already set by environment or hosting, default to localhost for local dev
   if (!window.__API_BASE__) {
-    window.__API_BASE__ = 'http://localhost:8080';
+    // Default to the deployed backend on Render — change this if you deploy elsewhere
+    window.__API_BASE__ = 'https://ootball-results-backend.onrender.com';
   }
 })();
