@@ -1,5 +1,6 @@
-// Use local backend by default during development. Change to your deployed URL when needed.
-const baseURL = "http://localhost:8080";
+// Use runtime-configured backend URL if provided via `frontend/config.js`.
+// Falls back to localhost for local development.
+const baseURL = (typeof window !== 'undefined' && window.__API_BASE__) ? window.__API_BASE__ : 'http://localhost:8080';
 
 const dateInput = document.getElementById("dateInput");
 const leagueSelect = document.getElementById("leagueSelect");
