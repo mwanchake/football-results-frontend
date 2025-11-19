@@ -222,6 +222,30 @@ footer a:hover {
   align-items: center;
 }
 
+/* Stacked layout: home above, away below */
+.teams.stacked {
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.teams.stacked .team {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.score-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.score-row .score {
+  font-size: 1.25rem;
+}
+
 .team {
   display: flex;
   align-items: center;
