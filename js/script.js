@@ -124,18 +124,19 @@ function displayMatches(matches) {
         time = 'TBA';
       }
       // Only show a numeric score when both goals are present and the fixture appears played.
-      // Otherwise show '-:-' for unplayed matches. This also handles cases where the
+      // Otherwise show '-' for each team for unplayed matches. This also handles cases where the
       // backend still returns 0-0 placeholders (we treat 0-0 without matchTime as unplayed).
-      let scoreText;
+      let homeGoalsDisplay = '-';
+      let awayGoalsDisplay = '-';
       if (typeof m.homeGoals === 'number' && typeof m.awayGoals === 'number') {
         // If both are zero and there's no explicit matchTime, treat as unplayed
         if (m.homeGoals === 0 && m.awayGoals === 0 && (!m.matchTime || String(m.matchTime).trim() === '')) {
-          scoreText = '-:-';
+          homeGoalsDisplay = '-';
+          awayGoalsDisplay = '-';
         } else {
-          scoreText = `${m.homeGoals} - ${m.awayGoals}`;
+          homeGoalsDisplay = String(m.homeGoals);
+          awayGoalsDisplay = String(m.awayGoals);
         }
-      } else {
-        scoreText = '-:-';
       }
 
       const homeLogoHtml = m.homeLogo ? `<img src="${escapeHtml(m.homeLogo)}" class="team-logo" alt="${escapeHtml(m.home || '')}">` : '';
