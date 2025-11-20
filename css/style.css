@@ -39,7 +39,8 @@ html, body {
     input[type="date"],select,button{padding:8px 12px;border-radius:8px;border:none;font-size:0.95rem}
     button{background:var(--accent);color:#04210a;font-weight:700}
 
-    main{padding:12px 10px 80px;min-height:60vh}
+    /* make space for fixed header and footer */
+    main{padding:80px 10px 84px;min-height:60vh}
 
     /* League section */
     .league-section{max-width:760px;margin:18px auto;background:linear-gradient(180deg,#0f3a20,#0b2e18);border-radius:12px;padding:12px 14px;box-shadow:0 6px 18px rgba(0,0,0,0.45)}
@@ -105,8 +106,19 @@ html, body {
     }
 
     /* Footer */
-    footer{background:#092912;color:#dfffe1;padding:12px;text-align:center}
-    footer a{color:var(--accent);text-decoration:none}
+    /* Fixed footer and header with green background */
+    header{
+        position:fixed;
+        top:0;
+        left:0;
+        right:0;
+        z-index:220;
+        background:linear-gradient(90deg,#0f8a45,#0b6f33);
+        box-shadow:0 4px 12px rgba(0,0,0,0.35);
+    }
+
+    footer{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(90deg,#0f8a45,#0b6f33);color:#eafcf0;padding:12px;text-align:center;z-index:210}
+    footer a{color:#072b0f;text-decoration:none;font-weight:700}
     footer a:hover{text-decoration:underline}
 
     @keyframes spin{to{transform:rotate(360deg)}}
