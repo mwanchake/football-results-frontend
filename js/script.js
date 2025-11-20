@@ -141,7 +141,11 @@ function displayMatches(matches) {
       let scoresHtml = '';
       let scoresShowTimeOrStatus = false; // when true, do not duplicate time in match-meta
       if (isFinished) {
-        scoresHtml = `<div class="score-status">FT</div>`;
+        // show numeric final score plus a small 'FT · time' label
+        const left = homeGoals !== null ? String(homeGoals) : '-';
+        const right = awayGoals !== null ? String(awayGoals) : '-';
+        const timeLabel = escapeHtml(time || '');
+        scoresHtml = `<div class="score-number">${escapeHtml(left)}</div><div class="score-number">${escapeHtml(right)}</div><div class="score-status score-small">FT · ${timeLabel}</div>`;
         scoresShowTimeOrStatus = true;
       } else if ((homeGoals === null && awayGoals === null) || (homeGoals === 0 && awayGoals === 0 && !isInPlay)) {
         // upcoming or not-yet-played: show time in the scores area for emphasis

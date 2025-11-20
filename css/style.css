@@ -85,6 +85,7 @@ html, body {
 
     /* Status shown in scores area for upcoming/finished fixtures */
     .score-status{font-size:16px;font-weight:800;color:#f0fdf4;text-align:center;padding:6px 8px;background:transparent;border-radius:6px}
+    .score-status.score-small{font-size:12px;font-weight:700;opacity:0.85;color:#d6f7d6;margin-top:6px}
 
     /* utility fallback for older stacked variant */
     .teams{display:flex;justify-content:space-between;align-items:center}
