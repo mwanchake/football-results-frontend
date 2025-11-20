@@ -165,3 +165,35 @@ window.onload = () => {
   loadLeagues();
   fetchMatches();
 };
+
+// Header compact behavior on scroll: shrink header slightly when user scrolls down
+(() => {
+  const header = document.querySelector('header');
+  const main = document.querySelector('main');
+  if (!header || !main) return;
+
+  let lastScrollY = window.scrollY;
+  let ticking = false;
+
+  function onScroll() {
+    lastScrollY = window.scrollY;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        if (lastScrollY > 24) {
+          header.classList.add('header--compact');
+          // reduce top padding so content moves up slightly
+          main.style.paddingTop = '64px';
+        } else {
+          header.classList.remove('header--compact');
+          main.style.paddingTop = '';
+        }
+        ticking = false;
+      });
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  // also handle touchmove for some mobile browsers
+  window.addEventListener('touchmove', onScroll, { passive: true });
+})();
