@@ -127,10 +127,28 @@ function displayMatches(matches) {
       // Otherwise show '-' for each team for unplayed matches. This also handles cases where the
       // backend still returns 0-0 placeholders (we treat 0-0 without matchTime as unplayed).
       // Always display numeric scores (default to 0) — shows 0–0 for unplayed fixtures
-      let homeGoalsDisplay = '0';
-      let awayGoalsDisplay = '0';
-      if (typeof m.homeGoals === 'number') homeGoalsDisplay = String(m.homeGoals);
-      if (typeof m.awayGoals === 'number') awayGoalsDisplay = String(m.awayGoals);
+      // Determine score / status display
+      const homeGoals = (typeof m.homeGoals === 'number') ? m.homeGoals : null;
+      const awayGoals = (typeof m.awayGoals === 'number') ? m.awayGoals : null;
+      const statusRaw = (m.matchStatus || '').toString();
+      const status = statusRaw.toLowerCase();
+      const isFinished = status.includes('ft') || status.includes('finished') || status.includes('full time');
+      const isInPlay = status && !isFinished;
+
+      // If match is finished -> show 'FT'
+      // If match is not played yet (no goals and not in-play) -> show the kickoff time instead of 0-0
+      // Otherwise show numeric scores
+      let scoresHtml = '';
+      if (isFinished) {
+        scoresHtml = `<div class="score-status">FT</div>`;
+      } else if ((homeGoals === null && awayGoals === null) || (homeGoals === 0 && awayGoals === 0 && !isInPlay)) {
+        // upcoming or not-yet-played: show time in the scores area for emphasis
+        scoresHtml = `<div class="score-status">${escapeHtml(time || '')}</div>`;
+      } else {
+        const left = homeGoals !== null ? String(homeGoals) : '-';
+        const right = awayGoals !== null ? String(awayGoals) : '-';
+        scoresHtml = `<div class="score-number">${escapeHtml(left)}</div><div class="score-number">${escapeHtml(right)}</div>`;
+      }
 
       const homeLogoHtml = m.homeLogo ? `<img src="${escapeHtml(m.homeLogo)}" class="team-logo" alt="${escapeHtml(m.home || '')}">` : '';
       const awayLogoHtml = m.awayLogo ? `<img src="${escapeHtml(m.awayLogo)}" class="team-logo" alt="${escapeHtml(m.away || '')}">` : '';
@@ -148,8 +166,7 @@ function displayMatches(matches) {
             <div class="status">${escapeHtml(m.matchStatus || '')}</div>
           </div>
           <div class="scores-vertical">
-            <div class="score-number">${homeGoalsDisplay}</div>
-            <div class="score-number">${awayGoalsDisplay}</div>
+            ${scoresHtml}
           </div>
         </div>
       `;
