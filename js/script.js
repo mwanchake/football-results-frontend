@@ -132,29 +132,56 @@ function displayMatches(matches) {
       const awayGoals = (typeof m.awayGoals === 'number') ? m.awayGoals : null;
       const statusRaw = (m.matchStatus || '').toString();
       const status = statusRaw.toLowerCase();
-      const isFinished = status.includes('ft') || status.includes('finished') || status.includes('full time');
+      let isFinished = status.includes('ft') || status.includes('finished') || status.includes('full time');
       const isInPlay = status && !isFinished;
 
-      // If match is finished -> show 'FT'
-      // If match is not played yet (no goals and not in-play) -> show the kickoff time instead of 0-0
-      // Otherwise show numeric scores
+      // If backend doesn't provide a status field, infer finished state from kickoff datetime
+      // Consider a match finished if kickoff + 3 hours is in the past (safe window for match duration)
+      if (!isFinished) {
+        try {
+          let matchDateTime = null;
+          if (m.matchDate) {
+            // If matchDate already contains time info, parse directly
+            if (String(m.matchDate).includes('T') || String(m.matchDate).includes(' ')) {
+              matchDateTime = new Date(m.matchDate);
+            } else if (m.matchTime) {
+              // combine date and time to form an ISO-like string
+              matchDateTime = new Date(`${m.matchDate}T${m.matchTime}`);
+            } else {
+              matchDateTime = new Date(m.matchDate);
+            }
+          }
+          if (matchDateTime && !isNaN(matchDateTime)) {
+            const finishedThresholdMs = 3 * 60 * 60 * 1000; // 3 hours
+            if ((matchDateTime.getTime() + finishedThresholdMs) < Date.now()) {
+              isFinished = true;
+            }
+          }
+        } catch (e) {
+          // ignore parsing errors and keep isFinished as detected by status
+        }
+      }
+
+      // If match is finished -> show 'FT' in the center where time was and numeric scores on the right
+      // If match is not played yet (no goals and not in-play) -> show the kickoff time in scores area
+      // Otherwise show numeric scores and keep time in the center
       let scoresHtml = '';
-      let scoresShowTimeOrStatus = false; // when true, do not duplicate time in match-meta
+      let centerText = ''; // what to show in the center meta (time or FT)
       if (isFinished) {
-        // show numeric final score plus a small 'FT' label (no time)
+        // Finished: numeric final score on right, 'FT' in center (no time)
         const left = homeGoals !== null ? String(homeGoals) : '-';
         const right = awayGoals !== null ? String(awayGoals) : '-';
-        scoresHtml = `<div class="score-number">${escapeHtml(left)}</div><div class="score-number">${escapeHtml(right)}</div><div class="score-status score-small">FT</div>`;
-        scoresShowTimeOrStatus = true;
+        scoresHtml = `<div class="score-number">${escapeHtml(left)}</div><div class="score-number">${escapeHtml(right)}</div>`;
+        centerText = 'FT';
       } else if ((homeGoals === null && awayGoals === null) || (homeGoals === 0 && awayGoals === 0 && !isInPlay)) {
-        // upcoming or not-yet-played: show time in the scores area for emphasis
+        // Upcoming: emphasize kickoff time in the scores area and leave center blank
         scoresHtml = `<div class="score-status">${escapeHtml(time || '')}</div>`;
-        scoresShowTimeOrStatus = true;
+        centerText = '';
       } else {
         const left = homeGoals !== null ? String(homeGoals) : '-';
         const right = awayGoals !== null ? String(awayGoals) : '-';
         scoresHtml = `<div class="score-number">${escapeHtml(left)}</div><div class="score-number">${escapeHtml(right)}</div>`;
-        scoresShowTimeOrStatus = false;
+        centerText = escapeHtml(time);
       }
 
       const homeLogoHtml = m.homeLogo ? `<img src="${escapeHtml(m.homeLogo)}" class="team-logo" alt="${escapeHtml(m.home || '')}">` : '';
@@ -169,7 +196,7 @@ function displayMatches(matches) {
             <div class="team-row">${awayLogoHtml}<span>${escapeHtml(m.away || '-')}</span></div>
           </div>
           <div class="match-meta">
-            <div class="time">${scoresShowTimeOrStatus ? '' : escapeHtml(time)}</div>
+            <div class="time">${centerText || ''}</div>
             <div class="status">${escapeHtml(m.matchStatus || '')}</div>
           </div>
           <div class="scores-vertical">
