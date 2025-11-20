@@ -139,15 +139,19 @@ function displayMatches(matches) {
       // If match is not played yet (no goals and not in-play) -> show the kickoff time instead of 0-0
       // Otherwise show numeric scores
       let scoresHtml = '';
+      let scoresShowTimeOrStatus = false; // when true, do not duplicate time in match-meta
       if (isFinished) {
         scoresHtml = `<div class="score-status">FT</div>`;
+        scoresShowTimeOrStatus = true;
       } else if ((homeGoals === null && awayGoals === null) || (homeGoals === 0 && awayGoals === 0 && !isInPlay)) {
         // upcoming or not-yet-played: show time in the scores area for emphasis
         scoresHtml = `<div class="score-status">${escapeHtml(time || '')}</div>`;
+        scoresShowTimeOrStatus = true;
       } else {
         const left = homeGoals !== null ? String(homeGoals) : '-';
         const right = awayGoals !== null ? String(awayGoals) : '-';
         scoresHtml = `<div class="score-number">${escapeHtml(left)}</div><div class="score-number">${escapeHtml(right)}</div>`;
+        scoresShowTimeOrStatus = false;
       }
 
       const homeLogoHtml = m.homeLogo ? `<img src="${escapeHtml(m.homeLogo)}" class="team-logo" alt="${escapeHtml(m.home || '')}">` : '';
@@ -162,7 +166,7 @@ function displayMatches(matches) {
             <div class="team-row">${awayLogoHtml}<span>${escapeHtml(m.away || '-')}</span></div>
           </div>
           <div class="match-meta">
-            <div class="time">${escapeHtml(time)}</div>
+            <div class="time">${scoresShowTimeOrStatus ? '' : escapeHtml(time)}</div>
             <div class="status">${escapeHtml(m.matchStatus || '')}</div>
           </div>
           <div class="scores-vertical">
