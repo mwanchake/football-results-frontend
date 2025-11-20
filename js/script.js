@@ -161,9 +161,20 @@ function displayMatches(matches) {
 }
 
 fetchBtn.addEventListener("click", fetchMatches);
+// Adjust `main` top padding to match the fixed header height so content isn't hidden
+function adjustMainPadding(){
+  const header = document.querySelector('header');
+  const main = document.querySelector('main');
+  if (!header || !main) return;
+  const extra = 8; // small breathing room
+  main.style.paddingTop = (header.offsetHeight + extra) + 'px';
+}
+
 window.onload = () => {
   loadLeagues();
   fetchMatches();
+  adjustMainPadding();
+  window.addEventListener('resize', adjustMainPadding);
 };
 
 // Header compact behavior on scroll: shrink header slightly when user scrolls down
@@ -181,12 +192,11 @@ window.onload = () => {
       window.requestAnimationFrame(() => {
         if (lastScrollY > 24) {
           header.classList.add('header--compact');
-          // reduce top padding so content moves up slightly
-          main.style.paddingTop = '64px';
         } else {
           header.classList.remove('header--compact');
-          main.style.paddingTop = '';
         }
+        // keep main padding in sync with header height
+        main.style.paddingTop = (header.offsetHeight + 8) + 'px';
         ticking = false;
       });
       ticking = true;
