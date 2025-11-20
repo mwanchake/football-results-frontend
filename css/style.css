@@ -36,7 +36,9 @@ html, body {
     h1{margin:6px 0;font-size:1.6rem;font-weight:700}
 
     .filters{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:10px;padding:6px}
-    input[type="date"], select{padding:8px 12px;border-radius:10px;border:none;font-size:0.95rem;background:rgba(255,255,255,0.03);color:inherit}
+    input[type="date"], select{padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);font-size:0.95rem;background:#000;color:#eaf7ea}
+    /* Keep native dropdown arrow but ensure contrast on dark theme */
+    select{ -webkit-appearance: menulist; appearance: menulist }
 
     /* Primary action button (Show Results) */
     #fetchBtn, .filters button{
