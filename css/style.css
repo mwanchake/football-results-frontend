@@ -175,4 +175,53 @@ html, body {
     footer a:hover{text-decoration:underline}
 
     @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Loading football + countdown: green panel and high-contrast elements */
+    .loading-wrap{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        gap:10px;
+        padding:18px 20px;
+        background:linear-gradient(180deg,var(--accent),#0f7a3a);
+        border-radius:12px;
+        box-shadow:0 12px 32px rgba(2,40,12,0.55);
+        border:1px solid rgba(255,255,255,0.04);
+    }
+
+    /* Orbit wrapper: rotates the football around the center */
+    .football-orbit{width:88px;height:88px;position:relative;display:flex;align-items:center;justify-content:center;animation:orbit-rotate 2.4s linear infinite}
+
+    .football-spinner{width:56px;height:56px;border-radius:50%;
+        background:conic-gradient(#08140b 0deg 36deg, #ffffff 36deg 72deg, #08140b 72deg 108deg, #ffffff 108deg 144deg, #08140b 144deg 180deg, #ffffff 180deg 216deg, #08140b 216deg 252deg, #ffffff 252deg 288deg, #08140b 288deg 360deg);
+        position:absolute;top:6px;left:50%;transform:translateX(-50%);
+        box-shadow:0 10px 30px rgba(0,0,0,0.55);
+        border:3px solid rgba(255,255,255,0.12);
+        animation:football-spin 0.9s linear infinite;
+    }
+    .football-spinner::before,.football-spinner::after{content:'';position:absolute;border-radius:50%}
+    .football-spinner::before{width:10px;height:10px;background:#08140b;left:6px;top:6px}
+    .football-spinner::after{width:8px;height:8px;background:#08140b;right:8px;bottom:8px}
+    @keyframes football-spin{to{transform:translateX(-50%) rotate(360deg)}}
+    @keyframes orbit-rotate{to{transform:rotate(360deg)}}
+
+    /* Countdown pill: white pill with green text for strong contrast */
+    .loading-countdown{
+        font-weight:900;
+        color:var(--accent);
+        font-size:1.15rem;
+        background:#ffffff;
+        padding:6px 12px;
+        border-radius:999px;
+        box-shadow:0 6px 14px rgba(2,40,12,0.16);
+    }
+    .loading-note{font-size:0.9rem;color:#05220f;opacity:0.95;animation:note-flash 3.2s ease-in-out infinite}
+
+    @keyframes note-flash{
+        0%{color:var(--muted);text-shadow:none}
+        25%{color:#aef9c8;text-shadow:0 0 6px rgba(34,197,94,0.18)}
+        50%{color:#ffffff;text-shadow:0 0 10px rgba(255,255,255,0.08)}
+        75%{color:#aef9c8;text-shadow:0 0 6px rgba(34,197,94,0.18)}
+        100%{color:var(--muted);text-shadow:none}
+    }
   }

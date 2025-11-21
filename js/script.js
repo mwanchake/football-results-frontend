@@ -33,7 +33,8 @@ async function loadLeagues() {
 async function fetchMatches() {
   const date = dateInput.value;
   const league = leagueSelect.value;
-  resultsContainer.innerHTML = "<p class='loading'>Loading results...</p>";
+  // Show football loader with 50s countdown while waiting for backend
+  showFootballLoader(50);
 
   try {
     const res = await fetch(`${baseURL}/api/matches?date=${date}&league=${league}`);
@@ -46,9 +47,12 @@ async function fetchMatches() {
     }
 
     const matches = await res.json();
+    // stop loader when we have data
+    stopFootballLoader();
     // matches is an array of MatchDto objects: {id, league, home, away, homeGoals, awayGoals, matchDate}
     displayMatches(matches);
   } catch (err) {
+    stopFootballLoader();
     // Network-level errors (DNS, ECONNREFUSED, CORS fail, request blocked, etc.) surface as TypeError in fetch
     if (err instanceof TypeError) {
       // Generic message for users; log details (including baseURL) for developers
@@ -227,6 +231,39 @@ window.onload = () => {
   adjustMainPadding();
   window.addEventListener('resize', adjustMainPadding);
 };
+
+// Football loader with countdown
+let __footballInterval = null;
+function showFootballLoader(startSeconds){
+  clearInterval(__footballInterval);
+  const seconds = Number(startSeconds) || 50;
+  let counter = seconds;
+  resultsContainer.innerHTML = `
+    <div class="loading-wrap">
+      <div class="football-orbit"><div class="football-spinner" aria-hidden="true"></div></div>
+      <div class="loading-countdown" id="loadingCountdown">${counter}</div>
+      <div class="loading-note">Waiting for results — ${counter}s</div>
+    </div>`;
+
+  const countdownEl = document.getElementById('loadingCountdown');
+  const noteEl = resultsContainer.querySelector('.loading-note');
+  __footballInterval = setInterval(()=>{
+    counter = Math.max(0, counter - 1);
+    if (countdownEl) countdownEl.textContent = String(counter);
+    if (noteEl) noteEl.textContent = `Waiting for results — ${counter}s`;
+    if (counter <= 0) {
+      // stop decrementing at zero but keep animation visible — indicate still waiting
+      clearInterval(__footballInterval);
+    }
+  },1000);
+}
+
+function stopFootballLoader(){
+  if (__footballInterval) {
+    clearInterval(__footballInterval);
+    __footballInterval = null;
+  }
+}
 
 // Header compact behavior on scroll: shrink header slightly when user scrolls down
 (() => {
