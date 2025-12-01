@@ -145,8 +145,22 @@ html, body {
     .teams{display:flex;justify-content:space-between;align-items:center}
 
     @media (max-width:720px){
-        /* On tablet and small desktop, allow stacking but keep widths predictable.
-           Keep the center meta in place so time/FT stays visually constant. */
+        /* Tablet and small desktop: keep columns but make header and controls flexible
+           so the UI doesn't break around 600px. Match-cards will stack later at 600px. */
+        .teams-vertical{min-width:auto;align-items:stretch;flex-direction:row;justify-content:space-between}
+        .team-row{flex:0 1 48%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .match-meta{margin-top:8px;flex:0 0 120px}
+        .scores-vertical{align-items:center;min-width:auto;flex-direction:row;justify-content:center;gap:10px}
+
+        /* Header adjustments for medium widths: keep logo, title and controls readable */
+        header{padding:14px 10px;display:flex;align-items:center;gap:10px}
+        .logo-left{position:relative;left:8px;top:auto;transform:none;margin:0;display:flex;align-items:center}
+        .logo-container{flex:1;justify-content:center}
+        .filters{flex:0 0 auto;margin-left:auto;flex-wrap:wrap;gap:8px}
+    }
+
+    /* At 600px and below, stack match cards and apply tighter mobile layout rules */
+    @media (max-width:600px){
         .match-card-content{flex-direction:column;align-items:stretch}
         .teams-vertical{min-width:auto;align-items:stretch;flex-direction:row;justify-content:space-between}
         .team-row{flex:0 1 48%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
