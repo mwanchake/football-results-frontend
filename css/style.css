@@ -96,8 +96,9 @@ main{padding:12px 10px 84px}
 
 .meta-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .match-meta{font-size:0.9rem;color:var(--muted)}
-.scores{display:flex;align-items:center;gap:10px;font-weight:800;color:#eaffea}
-.score-number{font-size:18px}
+.scores{display:flex;align-items:center;gap:8px;font-weight:800;color:#eaffea;justify-content:center;min-width:64px;flex:0 0 auto}
+.score-number{font-size:clamp(14px,1.6vw,18px);line-height:1}
+.match-meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
 
 /* Filters and controls compact on very small screens */
 @media (max-width:380px){
@@ -123,7 +124,7 @@ main{padding:12px 10px 84px}
   .teams-row{flex:1 1 auto}
   .team .team-logo{width:34px;height:34px}
   .team .team-name{font-size:1rem}
-  .scores{flex:0 0 90px;justify-content:center}
+  .scores{flex:0 0 72px;justify-content:center;min-width:56px}
 }
 
 /* TABLET -> DESKTOP: at 768px and up, increase spacing and card density */
@@ -136,6 +137,11 @@ main{padding:12px 10px 84px}
   .team .team-name{font-size:1.02rem}
   .score-number{font-size:18px}
   h1{font-size:1.2rem}
+
+  /* Ensure scores/time center and remain visible on wide layouts */
+  .match-card-content{align-items:center}
+  .scores{flex:0 0 80px;min-width:64px;justify-content:center}
+  .match-meta{max-width:200px}
 }
 
 /* Small motion preference respect */
