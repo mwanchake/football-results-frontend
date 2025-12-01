@@ -1,160 +1,367 @@
-/* Mobile-first stylesheet
-   - Base: optimized for small screens (<=600px)
-   - Breakpoints: extra-small (<=380px), mobile (<=600px), tablet (>=601px & <768px), desktop (>=768px)
-   - Header/footer are static by default (scroll with page). They become fixed at larger widths.
-   - Background image kept, with a dark overlay for contrast using body::before.
-*/
-
-:root{
-  --bg:#06180b;            /* page background fallback */
-  --panel:#0b2e18;         /* cards/panels */
-  --accent:#22c55e;        /* green accent */
-  --muted:#cfead0;         /* muted text */
-  --card-start:#0c2b14;
-  --card-end:#071d12;
-  --glass: rgba(255,255,255,0.03);
+/* Base fluid typography */
+html {
+  font-size: clamp(14px, 1.2vw + 10px, 18px);
 }
 
-/* Fluid but readable base typography */
-html{font-size:16px}
-@media (min-width:420px){html{font-size:17px}}
-@media (min-width:768px){html{font-size:18px}}
-
-/* Page background + overlay. Keep image but add overlay for contrast */
-body{
-  margin:0;
-  min-height:100vh;
-  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  /* Use the provided background image from the Images folder (path is relative to this CSS file) */
+  background-color: #06180b;
+  background-image: url("../Images/backgroundimage.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: #eaf7ea;
-  background-color: var(--bg);
-  background-image: url("../Images/backgroundimage .jpg");
-  background-repeat:no-repeat;
-  background-position:center center;
-  background-size:cover;
-  -webkit-font-smoothing:antialiased;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-/* Full-page dark overlay for better contrast over the background image */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  background: linear-gradient(rgba(0,0,0,0.42), rgba(0,0,0,0.42));
-  pointer-events:none;
-  z-index:0;
+/* Header and Footer */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem;
+  text-align: center;
+  background: linear-gradient(90deg, #16a34a 0%, #0f7a3a 100%);
+  color: #fff;
 }
 
-/* Basic layout wrappers */
-header, main, footer{position:relative;z-index:1}
-
-/* Header - MOBILE FIRST: static and compact */
-header{
-  width:100%;
-  box-sizing:border-box;
-  padding:12px 10px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  align-items:stretch;
-  background: linear-gradient(90deg, rgba(16,120,58,0.95), rgba(14,95,46,0.95));
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1rem;
+  text-align: center;
+  background: linear-gradient(90deg, #0b2e18 0%, #06220f 100%);
+  color: #fff;
 }
 
-.header-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.logo-left{display:flex;align-items:center;gap:8px}
-.football-logo{width:36px;height:36px;border-radius:6px;object-fit:cover}
-.title-wrap{display:flex;align-items:center;justify-content:center;gap:8px}
-h1{margin:0;font-size:1.05rem;font-weight:800;color:#fff}
-
-/* FILTERS - stack by default on small screens */
-.filters{display:flex;flex-direction:column;gap:8px;width:100%;box-sizing:border-box}
-.filters > *{width:100%}
-input[type="date"], select, .filters button, #fetchBtn{box-sizing:border-box}
-input[type="date"], select{
-  padding:9px 12px;border-radius:10px;border:1px solid var(--glass);background:rgba(0,0,0,0.3);color:var(--muted)
-}
-.filters button, #fetchBtn{
-  padding:10px 12px;border-radius:12px;border:1px solid rgba(0,0,0,0.25);font-weight:700;cursor:pointer;
-}
-#fetchBtn{background:#000;color:#fff}
-
-/* Main content spacing for mobile: header/footer are part of flow */
-main{padding:12px 10px 84px}
-
-/* League container - full width with comfortable padding on mobile */
-.league-section{width:100%;max-width:880px;margin:10px auto;background:linear-gradient(180deg,var(--card-start),var(--card-end));border-radius:10px;padding:10px;box-shadow:0 8px 20px rgba(0,0,0,0.45)}
-.league-header{display:flex;align-items:center;justify-content:flex-start;gap:10px;padding:8px 6px;margin-bottom:6px}
-.league-header h2{margin:0;background:#000;padding:6px 10px;border-radius:8px;font-size:0.95rem}
-
-/* MATCH CARD - Mobile: stacked vertical layout for readability */
-.match-card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.08));border-radius:10px;padding:10px;margin:8px 0;box-shadow:0 6px 16px rgba(0,0,0,0.45);overflow:hidden}
-.match-card-content{display:flex;flex-direction:column;gap:8px}
-
-.teams-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.team{display:flex;align-items:center;gap:8px;min-width:0}
-.team .team-logo{width:28px;height:28px}
-.team .team-name{font-weight:700;font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-.meta-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.match-meta{font-size:0.9rem;color:var(--muted)}
-.scores{display:flex;align-items:center;gap:8px;font-weight:800;color:#eaffea;justify-content:center;min-width:64px;flex:0 0 auto}
-.score-number{font-size:clamp(14px,1.6vw,18px);line-height:1}
-.match-meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
-
-/* Filters and controls compact on very small screens */
-@media (max-width:380px){
-  .football-logo{width:30px;height:30px}
-  h1{font-size:1rem}
-  .team .team-name{font-size:0.88rem}
-  .score-number{font-size:16px}
+.football-logo {
+  width: 48px;
+  height: 48px;
 }
 
-/* MOBILE -> TABLET: at 601px and up, make header fixed and lay out filters horizontally */
-@media (min-width:601px){
-  header{position:fixed;top:0;left:0;right:0;padding:14px 18px;flex-direction:row;align-items:center;z-index:220}
-  .header-row{align-items:center}
-  .logo-left{flex:0 0 auto}
-  .title-wrap{flex:1 1 auto;justify-content:center}
-  .filters{flex-direction:row;align-items:center;gap:10px;width:auto}
-  .filters > *{width:auto}
-  main{padding-top:84px}
-
-  /* Match cards: switch to a compact horizontal layout where teams on sides and score in middle */
-  .match-card{padding:12px}
-  .match-card-content{flex-direction:row;align-items:center;justify-content:space-between}
-  .teams-row{flex:1 1 auto}
-  .team .team-logo{width:34px;height:34px}
-  .team .team-name{font-size:1rem}
-  .scores{flex:0 0 72px;justify-content:center;min-width:56px}
+/* Filters */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
 }
 
-/* TABLET -> DESKTOP: at 768px and up, increase spacing and card density */
-@media (min-width:768px){
-  main{padding-top:92px;max-width:1100px;margin:0 auto}
-  .league-section{padding:14px;border-radius:12px}
-  .match-card{display:block;padding:12px;margin:10px 0;border-left:4px solid rgba(34,197,94,0.06)}
-  .match-card-content{gap:14px}
-  .team .team-logo{width:40px;height:40px}
-  .team .team-name{font-size:1.02rem}
-  .score-number{font-size:18px}
-  h1{font-size:1.2rem}
-
-  /* Ensure scores/time center and remain visible on wide layouts */
-  .match-card-content{align-items:center}
-  .scores{flex:0 0 80px;min-width:64px;justify-content:center}
-  .match-meta{max-width:200px}
+.filters input,
+.filters select,
+.filters button {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 300px;
 }
 
-/* Small motion preference respect */
-@media (prefers-reduced-motion: reduce){
-  *{transition:none!important;animation:none!important}
+/* Generic button styles for retry and other action buttons */
+.btn,
+#retryBtn,
+.loading-retry,
+.filters button {
+  background: #0b0b0b;
+  color: #ffffff;
+  border: none;
+  padding: 0.55rem 0.9rem;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+  transition: transform 120ms ease, box-shadow 120ms ease, opacity 120ms ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Footer - static on mobile; can remain fixed on larger displays if desired */
-footer{padding:12px;text-align:center;background:linear-gradient(90deg,#0f7a3a,#0b6f33);color:#eaffea}
+.btn:hover,
+#retryBtn:hover,
+.loading-retry:hover,
+.filters button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.45);
+}
 
-/* Utility: no-matches, loader and small helpers (kept compact) */
-.no-matches{padding:12px;border-radius:10px;text-align:center;background:linear-gradient(180deg,#0b3b24,#083017);color:#eaffea}
-.loading-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px;border-radius:12px;background:#0f7a3a}
+.loading-retry[disabled],
+#retryBtn[disabled],
+.btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
 
-/* Ensure interactive controls are accessible */
-button, input, select{font:inherit}
+/* Loading countdown badge (large numeric timer) */
+#loadingCountdown,
+.loading-countdown {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  height: 52px;
+  padding: 8px;
+  border-radius: 999px;
+  background: linear-gradient(180deg,#0b0b0b,#111);
+  color: #bff7b9;
+  font-weight: 800;
+  font-size: 1.1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.45), inset 0 -2px 6px rgba(255,255,255,0.02);
+  border: 2px solid rgba(255,255,255,0.04);
+}
+
+.loading-countdown-small {
+  min-width: 40px;
+  height: 40px;
+  font-size: 0.95rem;
+}
+
+.loading-note {
+  margin-left: 12px;
+  color: #dfffd8;
+  font-weight: 600;
+}
+
+/* Loading wrapper layout: center the counter and note in the results area */
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 36vh;
+  gap: 12px;
+  padding: 12px;
+}
+
+.loader-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.person-content {
+  display: block;
+}
+
+/* Results container */
+#resultsContainer {
+  padding: 80px 10px 84px;
+  min-height: 60vh;
+}
+
+/* League section */
+.league-section {
+  max-width: 760px;
+  margin: 18px auto;
+  background: linear-gradient(180deg, #0f3a20, #0b2e18);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+.league-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  background: #000;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* Match cards */
+.match-card {
+  background: linear-gradient(180deg, #0c2b14, #0b2914);
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px 0;
+  width: 100%;
+}
+
+.match-card-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Teams */
+.teams-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 140px;
+  flex: 1 1 220px;
+}
+
+.team-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #eefbe8;
+}
+
+.team-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  object-fit: cover;
+  background: #fff;
+  padding: 2px;
+}
+
+/* Match time */
+.match-meta {
+  text-align: center;
+  color: #cfead0;
+  min-width: 110px;
+  flex: 0 0 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.05);
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+/* Status chip inside match-meta */
+.match-meta .status {
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #0b0b0b;
+}
+.match-meta .status.pending {
+  background: linear-gradient(180deg,#fecaca,#ffedd5);
+  color: #6b2a00;
+}
+.match-meta .status.live {
+  background: linear-gradient(180deg,#ff6b6b,#ff2e2e);
+  color: #ffffff;
+}
+.match-meta .status.finished {
+  background: linear-gradient(180deg,#d1fae5,#bbf7d0);
+  color: #065f46;
+}
+
+/* Optional subtle border for finished match cards */
+.match--finished {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.02);
+}
+.match--live {
+  border: 1px solid rgba(255,80,80,0.14);
+}
+
+/* Scores */
+.scores-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+  min-width: 64px;
+  flex: 0 0 80px;
+  padding-right: 8px;
+}
+
+.score-number {
+  font-size: 18px;
+  font-weight: 800;
+  color: #caffc6;
+}
+
+/* ------------------- Responsive Breakpoints ------------------- */
+
+/* Tablet */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .match-card-content {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .match-card-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .teams-vertical {
+    order: 1;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .match-meta {
+    order: 2;
+    margin-bottom: 8px;
+    font-size: 14px;
+    flex: none;
+    min-width: 100px;
+  }
+
+  .scores-vertical {
+    order: 3;
+    flex-direction: row;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+  }
+
+  .team-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .team-row span {
+    max-width: 120px;
+    font-size: 14px;
+  }
+
+  .score-number {
+    font-size: 16px;
+  }
+}
+
+/* Extra small */
+@media (max-width: 380px) {
+  .team-logo {
+    width: 24px;
+    height: 24px;
+  }
+
+  .team-row span {
+    max-width: 100px;
+    font-size: 13px;
+  }
+
+  .score-number {
+    font-size: 14px;
+  }
+}

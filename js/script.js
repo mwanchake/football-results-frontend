@@ -170,26 +170,34 @@ function displayMatches(matches) {
         }
       }
 
-      // If match is finished -> show 'FT' in the center where time was and numeric scores on the right
-      // If match is not played yet (no goals and not in-play) -> show the kickoff time in scores area
-      // Otherwise show numeric scores and keep time in the center
+      // Determine display for scores and center meta, and set a status label
       let scoresHtml = '';
       let centerText = ''; // what to show in the center meta (time or FT)
+      let statusText = '';
+      let statusClass = 'pending';
+
       if (isFinished) {
         // Finished: numeric final score on right, 'FT' in center (no time)
         const left = homeGoals !== null ? String(homeGoals) : '-';
         const right = awayGoals !== null ? String(awayGoals) : '-';
         scoresHtml = `<div class="score-number">${escapeHtml(left)}</div><div class="score-number">${escapeHtml(right)}</div>`;
         centerText = 'FT';
-      } else if ((homeGoals === null && awayGoals === null) || (homeGoals === 0 && awayGoals === 0 && !isInPlay)) {
-        // Upcoming: emphasize kickoff time in the scores area and leave center blank
-        scoresHtml = `<div class="score-status">${escapeHtml(time || '')}</div>`;
-        centerText = '';
-      } else {
+        statusText = 'FT';
+        statusClass = 'finished';
+      } else if (isInPlay) {
+        // Live match: show numeric scores if available, show time/status in center and mark as live
         const left = homeGoals !== null ? String(homeGoals) : '-';
         const right = awayGoals !== null ? String(awayGoals) : '-';
         scoresHtml = `<div class="score-number">${escapeHtml(left)}</div><div class="score-number">${escapeHtml(right)}</div>`;
-        centerText = escapeHtml(time);
+        centerText = escapeHtml(time) || escapeHtml(m.matchStatus || '');
+        statusText = (m.matchStatus && String(m.matchStatus).trim()) ? String(m.matchStatus) : 'LIVE';
+        statusClass = 'live';
+      } else {
+        // Upcoming / pending: emphasize kickoff time and mark as pending
+        scoresHtml = `<div class="score-status">${escapeHtml(time || '')}</div>`;
+        centerText = '';
+        statusText = 'Pending';
+        statusClass = 'pending';
       }
 
       const homeLogoHtml = m.homeLogo ? `<img src="${escapeHtml(m.homeLogo)}" class="team-logo" alt="${escapeHtml(m.home || '')}">` : '';
@@ -197,6 +205,9 @@ function displayMatches(matches) {
 
       // Vertical card layout: league groups list match cards top-down.
       // Each match card shows teams (left, stacked), time/status (center), and scores (right, stacked).
+      // Add a status-specific class to the match card for styling
+      matchDiv.classList.add(`match--${statusClass}`);
+
       matchDiv.innerHTML = `
         <div class="match-card-content">
           <div class="teams-vertical">
@@ -205,7 +216,7 @@ function displayMatches(matches) {
           </div>
           <div class="match-meta">
             <div class="time">${centerText || ''}</div>
-            <div class="status">${escapeHtml(m.matchStatus || '')}</div>
+            <div class="status ${statusClass}">${escapeHtml(statusText)}</div>
           </div>
           <div class="scores-vertical">
             ${scoresHtml}
@@ -226,7 +237,12 @@ function adjustMainPadding(){
   const main = document.querySelector('main');
   if (!header || !main) return;
   const extra = 8; // small breathing room
+  // Ensure main has room for the fixed header and the fixed footer (if present)
   main.style.paddingTop = (header.offsetHeight + extra) + 'px';
+  const footer = document.querySelector('footer');
+  if (footer) {
+    main.style.paddingBottom = (footer.offsetHeight + extra) + 'px';
+  }
 }
 
 window.onload = () => {
@@ -364,8 +380,10 @@ function revealPersonOnce(){
         } else {
           header.classList.remove('header--compact');
         }
-        // keep main padding in sync with header height
+        // keep main padding in sync with header and footer heights
         main.style.paddingTop = (header.offsetHeight + 8) + 'px';
+        const footerEl = document.querySelector('footer');
+        if (footerEl) main.style.paddingBottom = (footerEl.offsetHeight + 8) + 'px';
         ticking = false;
       });
       ticking = true;
