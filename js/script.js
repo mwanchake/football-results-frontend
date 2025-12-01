@@ -94,7 +94,11 @@ function displayMatches(matches) {
   resultsContainer.innerHTML = '';
 
   if (!matches || matches.length === 0) {
-    resultsContainer.innerHTML = '<p>No matches found for this date.</p>';
+    resultsContainer.innerHTML = `
+      <div class="no-matches">
+        <p class="no-matches-title">No matches found for this date.</p>
+        <p class="no-matches-sub">Try a different date or clear the league filter.</p>
+      </div>`;
     return;
   }
 
@@ -240,20 +244,31 @@ function showFootballLoader(startSeconds){
   let counter = seconds;
   resultsContainer.innerHTML = `
     <div class="loading-wrap">
-      <div class="football-orbit"><div class="football-spinner" aria-hidden="true"></div></div>
-      <div class="loading-countdown" id="loadingCountdown">${counter}</div>
-      <div class="loading-note">Waiting for results — ${counter}s</div>
+      <div class="loader-content">
+        <div class="loading-countdown" id="loadingCountdown">${counter}</div>
+        <div class="loading-note">Waiting for results — ${counter}s</div>
+        <button id="loadingRetry" class="loading-retry" style="display:none">Retry</button>
+      </div>
+      <div class="person-content" aria-hidden="true" id="personContent" style="display:block">
+        <!-- person SVG will be injected here on demand -->
+      </div>
     </div>`;
 
   const countdownEl = document.getElementById('loadingCountdown');
   const noteEl = resultsContainer.querySelector('.loading-note');
+  const retryBtn = document.getElementById('loadingRetry');
   __footballInterval = setInterval(()=>{
     counter = Math.max(0, counter - 1);
     if (countdownEl) countdownEl.textContent = String(counter);
     if (noteEl) noteEl.textContent = `Waiting for results — ${counter}s`;
     if (counter <= 0) {
-      // stop decrementing at zero but keep animation visible — indicate still waiting
+      // stop decrementing at zero but keep the loader visible
       clearInterval(__footballInterval);
+      __footballInterval = null;
+      // show retry button
+      if (retryBtn) retryBtn.style.display = 'inline-flex';
+      // reveal person SVG with cross-fade
+      revealPersonOnce();
     }
   },1000);
 }
@@ -263,6 +278,72 @@ function stopFootballLoader(){
     clearInterval(__footballInterval);
     __footballInterval = null;
   }
+  // clear loader UI immediately (results will be rendered)
+  // but keep a tiny fade for visual polish
+  const wrap = resultsContainer.querySelector('.loading-wrap');
+  if (wrap) wrap.remove();
+}
+
+// Replace loader with a person spinning the ball animation
+// Inject a single SVG person + spinning ball and cross-fade it in once.
+let __personInjected = false;
+function revealPersonOnce(){
+  if (__personInjected) return;
+  __personInjected = true;
+  const personContainer = document.getElementById('personContent');
+  const loaderContent = resultsContainer.querySelector('.loader-content');
+  if (!personContainer) return;
+
+  // Inline SVG: simple stylized player spinning a ball — small and performant
+  const svg = `
+    <svg class="person-svg" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <g fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <!-- head -->
+        <circle cx="34" cy="18" r="6" fill="#ffffff"/>
+        <!-- torso -->
+        <path d="M34 24 L34 42" />
+        <!-- left arm -->
+        <path d="M22 32 L34 30" />
+        <!-- right arm (holds ball) -->
+        <path d="M34 30 L50 24" />
+        <!-- left leg -->
+        <path d="M34 42 L26 62" />
+        <!-- right leg (kicking posture) -->
+        <path id="kickLeg" d="M34 42 L46 64" transform-origin="34 42" />
+      </g>
+      <!-- spinning ball -->
+      <g id="spinBall" transform="translate(50,22)">
+        <circle r="5" fill="#ffffff" stroke="rgba(0,0,0,0.18)" stroke-width="1" />
+      </g>
+      <style>
+        /* local SVG animations */
+        @keyframes svg-spin { to { transform: rotate(360deg); } }
+        @keyframes leg-kick { 0% { transform: rotate(0deg); } 30% { transform: rotate(-28deg); } 60% { transform: rotate(6deg); } 100% { transform: rotate(0deg); } }
+        #spinBall { animation: svg-spin 0.9s linear infinite; transform-origin: center; }
+        #kickLeg { animation: leg-kick 1.4s ease-in-out infinite; transform-origin: 34px 42px; }
+      </style>
+    </svg>`;
+
+  personContainer.innerHTML = svg;
+
+  // cross-fade
+  if (loaderContent) loaderContent.classList.add('fade-out');
+  personContainer.classList.add('fade-in');
+  personContainer.style.opacity = '0';
+  // ensure display block and then animate
+  setTimeout(()=>{
+    personContainer.style.opacity = '';
+    personContainer.classList.add('fade-in');
+  },10);
+
+  // wire retry button to re-run fetch if present
+  const retryBtn = document.getElementById('loadingRetry');
+  if (retryBtn) retryBtn.addEventListener('click', ()=>{
+    retryBtn.style.display = 'none';
+    // restart loader and fetch
+    showFootballLoader(50);
+    fetchMatches();
+  });
 }
 
 // Header compact behavior on scroll: shrink header slightly when user scrolls down
