@@ -177,6 +177,18 @@ html, body {
         .match-meta{margin-top:6px;font-size:13px}
 
         footer{position:static;padding:12px;font-size:0.9rem}
+        /* Mobile: make header stack and keep layout consistent */
+        header{
+            padding:12px 8px;
+            display:flex;
+            flex-direction:column;
+            align-items:stretch;
+            gap:8px;
+        }
+        /* Move left logo into the normal flow on small screens */
+        .logo-left{position:relative;left:auto;top:auto;transform:none;margin:0 0 6px 0;display:flex;justify-content:flex-start}
+        .logo-container{order:1;justify-content:center}
+        .filters{order:2;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
     }
 
     /* Responsive tweaks for left logo */
